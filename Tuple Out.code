@@ -1,0 +1,59 @@
+import random
+
+def roll_dice(num_dice=3):
+    return [random.randint(1, 6) for _ in range(num_dice)]
+
+def check_tuple_out(dice):
+    return len(set(dice)) == 1
+
+def play_turn(player_name):
+    dice = roll_dice()
+    print(f"{player_name}'s roll: {dice}")
+    
+    while True:
+        if check_tuple_out(dice):
+            print(f"{player_name} tupled out! Score: 0")
+            return 0
+        
+        fixed_dice = [d for d in dice if dice.count(d) >= 2]
+        if len(fixed_dice) == 2:
+            print(f"Fixed dice: {fixed_dice}")
+            reroll = input("Reroll the unfixed die? (y/n): ").lower() == 'y'
+            if reroll:
+                dice = fixed_dice + [random.randint(1, 6)]
+                print(f"New roll: {dice}")
+            else:
+                score = sum(dice)
+                print(f"{player_name}'s score this turn: {score}")
+                return score
+        else:
+            reroll = input("Reroll all dice? (y/n): ").lower() == 'y'
+            if reroll:
+                dice = roll_dice()
+                print(f"New roll: {dice}")
+            else:
+                score = sum(dice)
+                print(f"{player_name}'s score this turn: {score}")
+                return score
+
+def main():
+    player1_score = 0
+    player2_score = 0
+    
+    while max(player1_score, player2_score) < 50:
+        print("\nPlayer 1's turn")
+        player1_score += play_turn("Player 1")
+        print(f"Total scores - Player 1: {player1_score}, Player 2: {player2_score}")
+        
+        if player1_score >= 50:
+            break
+        
+        print("\nPlayer 2's turn")
+        player2_score += play_turn("Player 2")
+        print(f"Total scores - Player 1: {player1_score}, Player 2: {player2_score}")
+    
+    winner = "Player 1" if player1_score >= 50 else "Player 2"
+    print(f"\n{winner} wins the game!")
+
+if __name__ == "__main__":
+    main()
